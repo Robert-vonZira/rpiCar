@@ -1,13 +1,15 @@
 #https://www.johannespetz.de/l293d-geschwindigkeit-und-richtung-von-dc-motoren-steuern/
 
 import RPi.GPIO as GPIO
+
 #import _fake_GPIO as GPIO
 pins = [2, 3, 4, 7, 8, 9, 10, 11, 14, 15, 17, 18, 22, 23, 24, 25, 27] 
+
 
 fwdPin=24
 rwdPin=25
 leftPin=23
-rightPin=18
+rightPin=18 
      
 
 class Vehicle:
@@ -48,19 +50,19 @@ class Vehicle:
                 print ("Vehicle: activatePin 23")
             self.pinbridge.deactivatePin(leftPin)
             self.pinbridge.deactivatePin(rightPin)
-            return "Vehilce: steering direction: ", _directionAsInt
+            return "Vehilce: steering direction: straight"
         if _directionAsInt == 1:
             if self.testmode:
                 print ("vehicle: steering to direction: ", _directionAsInt)
             self.pinbridge.deactivatePin(leftPin)
             self.pinbridge.activatePin(rightPin)
-            return "Vehilce: steering direction: ", _directionAsInt
+            return "Vehilce: steering direction: left"
         if _directionAsInt == 2:
             if self.testmode:
                 print ("vehicle: steering to direction: ", _directionAsInt)
             self.pinbridge.deactivatePin(rightPin)
             self.pinbridge.activatePin(leftPin)
-            return "Vehilce: steering direction: ", _directionAsInt
+            return "Vehilce: steering direction: right"
     def move(self, _speed):
         #_speed = 0.0 +int(_speed)
         #print ("Vehicle: function move was called, speed: ", _speed)
@@ -80,13 +82,13 @@ class Vehicle:
             self.fwd.ChangeDutyCycle(0)
             speedrwd = int(_speed) *(-1)
             self.rwd.ChangeDutyCycle(speedrwd)
-            return "Vehilce: moving backward, speed: ", _speed
+            return "Vehilce: moving backward, speed: "+str( _speed)
         if int(_speed) > 0:
             if self.testmode:
                 print ("Vehicle: function move was called -> FWD", _speed)
             self.rwd.ChangeDutyCycle(0)
             self.fwd.ChangeDutyCycle(_speed)
-            return "Vehilce: moving forward, speed: ", _speed
+            return "Vehilce: moving forward, speed: "+ str(_speed)
         pass
         
     def setTestmode(self, _boolean):

@@ -10,6 +10,8 @@ import asyncio
 import nest_asyncio
 nest_asyncio.apply()
 
+#from raspiHW.configHandler import ConfigHandler as conf
+#config = conf.readConfig2Dict(conf, "GPIOconfig.conf")
 
 start_server = websockets.serve(client_handler, *LISTEN_ADDRESS)
 print ('WebSocket Server version 5_x up and running!')

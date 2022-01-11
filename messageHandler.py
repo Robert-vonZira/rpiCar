@@ -2,8 +2,6 @@ from raspiHW.Pinbridge import Pinbridge
 from raspiHW.HC_SR04_SonicSensor import HC_SR04_SonicSensor
 from raspiHW.SimulateSensor import SimulateSensor
 from raspiHW.Vehicle import Vehicle
-from threading import Thread
-import time
 import asyncio
 
 class messageHandler():
@@ -15,9 +13,9 @@ class messageHandler():
  def __init__ (self, _websocket): #"constructor" -> initiator 
   #variablen mit self.xyz hier initialisieren
    self.bridge = Pinbridge()
-   self.sonarF = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorF", 20, 21)#11, 10)#bridge, websocket,    trigger, echo
-   self.sonarL = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorL", 7, 8)#14
-   self.sonarR = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorR", 17, 22)
+   self.sonarF = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorF", 20, 21)#bridge, websocket,    trigger, echo
+   self.sonarL = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorL", 16, 12)
+   self.sonarR = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorR", 19, 13)
    self.SimulateSensor = SimulateSensor(self.bridge, _websocket)
    self.v = Vehicle(self.bridge)
    self.websocket = _websocket
@@ -71,29 +69,37 @@ class messageHandler():
             print ("class messageHandler: Test Stuff...")
         if command == "mode":
             if self.testmode:
-                print ("class messageHandler: Changing Testmode...")
+                print ("class messageHandler: Changing to Testmode...")
                 print (values[0])
             if values[0] == 'on':
                 self.testmode=True
                 self.v.setTestmode(True)
                 self.sonarF.setTestmode(True)
                 self.sonarL.setTestmode(True)
-                return "MessageHandler: Testmode ON"
+                answer = "MessageHandler: Testmode ON"
+                asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+                return answer
             if values[0] == 'off':
                 self.testmode=False
                 self.v.setTestmode(False)
                 self.sonarF.setTestmode(False)
                 self.sonarL.setTestmode(False)
-                return "MessageHandler: Testmode OFF"
+                answer = "MessageHandler: Testmode OFF"
+                asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+                return answer
         if command == "activatePin":
             self.bridge.setPin2Write(int(values[0]))
             #print ("MessageHanlder: set PinNbr: "+values[0]+" to writeMode")
             self.bridge.activatePin(int(values[0]))
-            return "MessageHanlder: activated PinNbr: "+values[0]
+            answer = "MessageHanlder: activated PinNbr: "+values[0]
+            asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+            return answer
         if command == "deactivatePin":
             self.bridge.setPin2Write(int(values[0]))
             self.bridge.deactivatePin(int(values[0]))
-            return "MessageHanlder: deactivated PinNbr: "+values[0]
+            answer = "MessageHanlder: deactivated PinNbr: "+values[0]
+            asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+            return answer
             
             
         elif command == "ping":

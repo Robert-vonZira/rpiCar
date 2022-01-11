@@ -3,9 +3,11 @@
 """
 Created on Sun Jan  9 22:51:53 2022
 
+Bundels GIO functions and delivers checkings, i.e. wether a Pin is already in use.. .
+
 on laptop gpio simulator is used: https://github.com/nosix/raspberry-gpio-emulator
 
-@author: robert
+@author: robert-vonZira
 """
 
 
@@ -29,8 +31,10 @@ class Singleton(type):
 
 
 import RPi.GPIO as GPIO
+
+
 #import _fake_GPIO as GPIO
-import time
+#import time
 #GPIO numbering
 pins = [2, 3, 4, 7, 8, 9, 10, 11, 14, 15, 17, 18, 22, 23, 24, 25, 27]
 pinsRpi2 = [0, 1, 4, 7, 8, 9, 10, 11, 14, 15, 17, 18, 21, 22, 23, 24, 25]
@@ -46,7 +50,8 @@ class Pinbridge(metaclass=Singleton):
    # """ Create singleton instance """    
    # Check whether we already have an instance
    # pass
-
+ 
+ 
  def printListOfUsedPins(self):
     #forEach writngpins
     #forEach readingpins

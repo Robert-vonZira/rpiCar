@@ -13,7 +13,7 @@ n=0
 #trigger_pin = 11 #7
 #echo_pin = 10 # 14
 name = ""
-timeout= 0.06 #0.039
+timeout= 0.039 #0.039
 
 class HC_SR04_SonicSensor:
     
@@ -87,7 +87,7 @@ class HC_SR04_SonicSensor:
             return self.name,".Err TimeOut failure while measuring distance!"
         duration = end - start
         distance = duration * 17150
-        distance = round(distance, 2)
+        distance = round(distance, 1)
         if self.testmode:
             print (self.name," got a Distance:",distance,"cm")
         return distance
