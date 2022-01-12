@@ -1,3 +1,10 @@
+"""
+Created 2016
+
+
+
+@author: robert-vonZira
+"""
 from raspiHW.Pinbridge import Pinbridge
 from raspiHW.HC_SR04_SonicSensor import HC_SR04_SonicSensor
 from raspiHW.SimulateSensor import SimulateSensor
@@ -5,10 +12,10 @@ from raspiHW.Vehicle import Vehicle
 import asyncio
 
 class messageHandler():
-
+ 
 # True and False are keywords and will always be equal to 1 and 0.
  testmode=0
- answer="messagehandler: has nothing done!"
+ #answer="messagehandler: has nothing done!"
 
  def __init__ (self, _websocket): #"constructor" -> initiator 
   #variablen mit self.xyz hier initialisieren
@@ -24,24 +31,31 @@ class messageHandler():
    
  
  def getmessage(self, _message):
-    self.answer="messagehandler: has done nothing!"
+    answer="messagehandler: has done nothing!"
     # print("class messsageHandler: message received: ", _message)
     #bridge.sayHello()
-    
-    identifyer=_message[0:_message.find(".")]
-    if self.testmode:
-        print("calss MessageHandler identifyer = "+identifyer)
-    if ' ' not in _message:
-        command = _message[_message.find(".")+1:len(_message)]
-    else:
-        command = _message[_message.find(".")+1:_message.find(" ")]
-    values = self.splitCommand(_message[_message.find(" ")+1:len(_message)])
-    if self.testmode:
-            print ("class message handler identifyer: ",identifyer)
-    if self.testmode:
-            print ("class message handler command: ",command)
-    if self.testmode:
-            print ("class message handler values: ",values)
+    try:
+        identifyer=_message[0:_message.find(".")]
+        if self.testmode:
+            print("calss MessageHandler identifyer = "+identifyer)
+        if ' ' not in _message:
+            command = _message[_message.find(".")+1:len(_message)]
+        else:
+            command = _message[_message.find(".")+1:_message.find(" ")]
+        values = self.splitCommand(_message[_message.find(" ")+1:len(_message)])
+        if self.testmode:
+                print ("class message handler identifyer: ",identifyer)
+        if self.testmode:
+                print ("class message handler command: ",command)
+        if self.testmode:
+                print ("class message handler values: ",values)
+    except:
+        answer = "messageHanlder on rpi: ERROR - unkonwn / not suitable command was sent."
+        asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+        
+
+        
+
 #help
     if identifyer == "help" or _message == "help":
         answer = self.usage()
@@ -61,7 +75,10 @@ class messageHandler():
             asyncio.ensure_future(self.sendmessage("simulate looping stoped!", self.websocket))
             return "MessageHandler: simulated getLoop stopped"
         else:
-            return "MessageHandler: unknown command for: "+ identifyer
+            answer="MessageHandler: unknown command for: "+identifyer
+            asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+            return answer
+            
             
 #test             
     elif identifyer == "test":
@@ -99,16 +116,17 @@ class messageHandler():
             self.bridge.deactivatePin(int(values[0]))
             answer = "MessageHanlder: deactivated PinNbr: "+values[0]
             asyncio.ensure_future(self.sendmessage(answer, self.websocket))
-            return answer
-            
+            return answer           
             
         elif command == "ping":
             pong = "pong!"
             asyncio.ensure_future(self.sendmessage(pong, self.websocket))
             return pong
         else:
-            return "MessageHandler: unknown command for: "+identifyer
-    
+            answer="MessageHandler: unknown command for: "+identifyer
+            asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+            return answer
+
 #vehicle    
     elif identifyer == "vehicle": 
         if self.testmode:
@@ -122,59 +140,78 @@ class messageHandler():
                 print ("class messageHandler: vehicle move direction: ", values[0])
             return self.v.move(int(values[0]))
         else:
-            return "MessageHandler: unknown command for: "+identifyer
+            answer="MessageHandler: unknown command for: "+identifyer
+            asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+            return answer
+            
             
 #sonar
     elif identifyer == "sonar":
         if self.testmode:
             print ("class messageHandler: sonar Stuff...")
-        if command == "getDistanceF":
-            distance = self.sonarF.getDistance()
-            if self.testmode:
-                print ("messageHandler: got a distance from sonarF: "+ distance)
-            asyncio.ensure_future(self.sendmessage(distance, self.websocket))
-            return "MessageHandler from Sonar: " +distance
-        if command == "getDistanceL":
-            distance = self.sonarL.getDistance()
-            if self.testmode:
-                print ("messageHandler: got a distance from sonarL: "+ distance)
-            asyncio.ensure_future(self.sendmessage(distance, self.websocket))
-            return "MessageHandler from SonarL: " +distance
-        if command == "getDistanceR":
-            distance = self.sonarR.getDistance()
-            if self.testmode:
-                print ("messageHandler: got a distance from sonarR: "+ distance)
-            asyncio.ensure_future(self.sendmessage(distance, self.websocket))
-            return "MessageHandler from SonarR: " +distance
-        elif command == "getDistanceStreamF":
-            asyncio.ensure_future(self.sonarF.getDistanceStream())
-            return "MessageHandler: Sonar: DistanceStream started"
-        elif command == "getDistanceStreamL":
-            asyncio.ensure_future(self.sonarL.getDistanceStream())
-            return "MessageHandler: SonarL: DistanceStream started"
-        elif command == "getDistanceStreamR":
-            asyncio.ensure_future(self.sonarR.getDistanceStream())
-            return "MessageHandler: SonarR: DistanceStream started"
+        if command == "getDistance":
+            if values[0] == 'F':
+                distance = self.sonarF.getDistance()
+                if self.testmode:
+                    print ("messageHandler: got a distance from sonar Front: "+ distance)
+                asyncio.ensure_future(self.sendmessage(distance, self.websocket))
+                return "MessageHandler from Sonar: " +distance
+            elif values[0] == 'L':
+                distance = self.sonarL.getDistance()
+                if self.testmode:
+                    print ("messageHandler: got a distance from sonar Left: "+ distance)
+                asyncio.ensure_future(self.sendmessage(distance, self.websocket))
+                return "MessageHandler from Sonar: " +distance
+            elif values[0] == 'R':
+                distance = self.sonarR.getDistance()
+                if self.testmode:
+                    print ("messageHandler: got a distance from sonar Right: "+ distance)
+                asyncio.ensure_future(self.sendmessage(distance, self.websocket))
+                return "MessageHandler from Sonar: " +distance
+            else:
+                answer="MessageHandler: unknown value for: "+identifyer+"."+command
+                asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+                return answer
+        
+        elif command == "getDistanceStream":
+            if values[0] == 'F':
+                asyncio.ensure_future(self.sonarF.getDistanceStream())
+                return "MessageHandler: Sonar: DistanceStream Front started"
+            elif values[0] == 'L':
+                asyncio.ensure_future(self.sonarL.getDistanceStream())
+                return "MessageHandler: Sonar: DistanceStream Left started"
+            elif values[0] == 'R':
+                asyncio.ensure_future(self.sonarR.getDistanceStream())
+                return "MessageHandler: Sonar: DistanceStream Right started"
+            else:
+                answer="MessageHandler: unknown value for: "+identifyer+"."+command
+                asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+                return answer
+        
+            
         elif command == "stop":
             self.sonarF.setDoStream(False)
             self.sonarL.setDoStream(False)
             self.sonarR.setDoStream(False)
-            return "MessageHandler: Sonar: DistanceStream stopped"
+            return "MessageHandler: Sonar: all DistanceStreams stopped"
         else:
-            return "MessageHandler: unknown command for: "+identifyer
-#answer if no action was performed   
-#    asyncio.ensure_future(self.sendmessage("messagehandler: has nothing done!", self.websocket))
-    return self.answer
+            answer="MessageHandler: unknown command for: "+identifyer
+            asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+            return answer
+    #response if no suitable command was found: 
+    asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+    return answer
+ 
  
  @asyncio.coroutine
  def sendmessage(self, _message, _websocket):
     if self.testmode:
-        print ("handler: method sendmessage was called")
+        print ("handler: method sendmessage() was called")
     yield from _websocket.send(_message)
    
  def splitCommand(self, _message):
     return _message.split()
     
  def usage(self):
-    usage ="list of known commands. \n pattern: identifyer.command [values] \n test.mode [on,off]\n vehicle.steer [0(ahead), 1(right), 2(left)] \n vehicle.move [-100(rwd)-100(fwd)] \n sonar.getDistance [] \n sonar.getDistanceStream [] \n sonar.stop [] \n sim."
-    return usage
+     usage ="list of known commands: \n pattern: identifyer.command [values] \n test.mode [on,off]\n vehicle.steer [0(ahead), 1(right), 2(left)] \n vehicle.move [-100(rwd)-100(fwd)] \n sonar.getDistance [F, L, R] \n sonar.getDistanceStream [F, L, R] \n sonar.stop [] \n sim."
+     return usage

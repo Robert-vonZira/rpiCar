@@ -1,3 +1,10 @@
+"""
+Created 2016
+
+
+
+@author: robert-vonZira
+"""
 import asyncio
 #from messageHandler import *
 from messageHandler import messageHandler 

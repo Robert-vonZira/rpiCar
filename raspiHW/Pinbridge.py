@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jan  9 22:51:53 2022
+Created in 2016
 
 Bundels GIO functions and delivers checkings, i.e. wether a Pin is already in use.. .
 

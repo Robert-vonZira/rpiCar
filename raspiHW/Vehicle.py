@@ -1,4 +1,10 @@
-#https://www.johannespetz.de/l293d-geschwindigkeit-und-richtung-von-dc-motoren-steuern/
+"""
+Created 2016
+
+thanks to: https://www.johannespetz.de/l293d-geschwindigkeit-und-richtung-von-dc-motoren-steuern/
+
+@author: robert-vonZira
+"""
 
 import RPi.GPIO as GPIO
 

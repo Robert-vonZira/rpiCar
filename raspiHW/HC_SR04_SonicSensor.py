@@ -1,9 +1,25 @@
 # coding: utf8
+"""
+Created 2016
+                  10µS TTL every 20 mS possible
+                  ____
+triggerInput ____|    \_________________________________________________________________________________________________
+                       250µS Delay
+                                      8 Cycles Sonic Burst 200µS
+sonic Burst                          _   _   _   _   _   _   _   _
+from module_________________________| \_| \_| \_| \_| \_| \_| \_| \_____________________________________________________________________
+                                                                        Input Echo Signal
+Echo Pulse                                                                __________ 
+Output    _______________________________________________________________|          \______________
+
+
+
+@author: robert-vonZira
+"""
 
 import RPi.GPIO as GPIO
 #import _fake_GPIO as GPIO
 import time
-import random
 import asyncio
 #GPIO numbering
 pins = [2, 3, 4, 7, 8, 9, 10, 11, 14, 15, 17, 18, 22, 23, 24, 25, 27] 
@@ -101,7 +117,7 @@ class HC_SR04_SonicSensor:
     def getDistanceStream(self):
         self.doloop = True
         while (self.doloop):
-            yield from asyncio.sleep(0.1)
+            yield from asyncio.sleep(0.2)
             yield from self.websocket.send(self.getDistance())
             
         pass
