@@ -148,8 +148,15 @@ class messageHandler():
 #sonar
     elif identifyer == "sonar":
         if self.testmode:
-            print ("class messageHandler: sonar Stuff...")
-        if command == "getDistance":
+            if command == "stop":
+                answer = ("TESTMODE all Sonars have stopped")
+                asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+                return "class messageHandler: all Sonars have stopped"
+            else: 
+                answer = ("TESTMODE sonar "+values[0] + " does some Measurements...")
+                asyncio.ensure_future(self.sendmessage(answer, self.websocket))
+                return "class messageHandler: sonar "+values[0] + " does some Measurements..."
+        elif command == "getDistance":
             if values[0] == 'F':
                 distance = self.sonarF.getDistance()
                 if self.testmode:
@@ -213,5 +220,5 @@ class messageHandler():
     return _message.split()
     
  def usage(self):
-     usage ="list of known commands: \n pattern: identifyer.command [values] \n test.mode [on,off]\n vehicle.steer [0(ahead), 1(right), 2(left)] \n vehicle.move [-100(rwd)-100(fwd)] \n sonar.getDistance [F, L, R] \n sonar.getDistanceStream [F, L, R] \n sonar.stop [] \n sim."
+     usage ="list of known commands: \n pattern: identifyer.command [values] \n test.mode [on,off]\n test.activatePin [int] \n test.deactivatePin [int]\n test.ping [] \n vehicle.steer [0(ahead), 1(right), 2(left)] \n vehicle.move [-100(rwd)-100(fwd)] \n sonar.getDistance [F, L, R] \n sonar.getDistanceStream [F, L, R] \n sonar.stop [] \n sim.getLoop [] \n sim.stop [] \n "
      return usage
