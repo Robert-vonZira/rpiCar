@@ -93,6 +93,7 @@ class messageHandler():
                 self.v.setTestmode(True)
                 self.sonarF.setTestmode(True)
                 self.sonarL.setTestmode(True)
+                self.sonarR.setTestmode(True)
                 answer = "MessageHandler: Testmode ON"
                 asyncio.ensure_future(self.sendmessage(answer, self.websocket))
                 return answer
@@ -101,6 +102,7 @@ class messageHandler():
                 self.v.setTestmode(False)
                 self.sonarF.setTestmode(False)
                 self.sonarL.setTestmode(False)
+                self.sonarR.setTestmode(False)
                 answer = "MessageHandler: Testmode OFF"
                 asyncio.ensure_future(self.sendmessage(answer, self.websocket))
                 return answer
