@@ -20,9 +20,9 @@ class messageHandler():
  def __init__ (self, _websocket): #"constructor" -> initiator 
   #variablen mit self.xyz hier initialisieren
    self.bridge = Pinbridge()
-   self.sonarF = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorF", 20, 21)#bridge, websocket,    trigger, echo
-   self.sonarL = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorL", 16, 12)
-   self.sonarR = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorR", 19, 13)
+   self.sonarF = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorF", 20, 21, 12)#bridge, websocket,    trigger, echo -12cm
+   self.sonarL = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorL", 16, 12, 17) #-17mc
+   self.sonarR = HC_SR04_SonicSensor(self.bridge, _websocket, "HC_SR04_SonicSensorR", 19, 13, 17)
    self.SimulateSensor = SimulateSensor(self.bridge, _websocket)
    self.v = Vehicle(self.bridge)
    self.websocket = _websocket

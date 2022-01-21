@@ -21,7 +21,7 @@ nest_asyncio.apply()
 #config = conf.readConfig2Dict(conf, "GPIOconfig.conf")
 
 start_server = websockets.serve(client_handler, *LISTEN_ADDRESS)
-print ('WebSocket Server version 5_x up and running!')
+print ('WebSocket Server version 5.0.1 up and running!')
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

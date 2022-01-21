@@ -37,7 +37,7 @@ class HC_SR04_SonicSensor:
     # True and False are keywords and will always be equal to 1 and 0.
     testmode=False
         # constructor
-    def __init__(self, _pinbridge, _websocket, _name, _triggerPinNbr, _echoPinNbr):
+    def __init__(self, _pinbridge, _websocket, _name, _triggerPinNbr, _echoPinNbr, _balancing):
         self.pinbridge = _pinbridge
         self.websocket = _websocket
         self.pinbridge.setGpioMode2Bcm()
@@ -48,6 +48,7 @@ class HC_SR04_SonicSensor:
         self.trigger_pin=_triggerPinNbr
         self.pinbridge.setPin2Write(self.trigger_pin)
         self.pinbridge.setPin2read(self.echo_pin)
+        self.balance = _balancing
         
         
     def getMeasurement(self):
@@ -104,6 +105,7 @@ class HC_SR04_SonicSensor:
         duration = end - start
         distance = duration * 17150
         distance = round(distance, 1)
+        distance = distance -self.balance
         if self.testmode:
             print (self.name," got a Distance:",distance,"cm")
         return distance
@@ -116,11 +118,23 @@ class HC_SR04_SonicSensor:
     @asyncio.coroutine
     def getDistanceStream(self):
         self.doloop = True
+        measurements = [0,0,0,0,0]
         while (self.doloop):
             yield from asyncio.sleep(0.2)
-            yield from self.websocket.send(self.getDistance())
+            # yield from self.websocket.send(self.getDistance())
+            del measurements[0]
+            measurements.append(self.getMeasurement())
+            yield from self.websocket.send(self.name+".distance "+str(round(self.avarage(measurements),1))+" cm")
+            
             
         pass
+
+    def avarage (self, values):
+        sum = 0
+        for m in values:
+            sum += float(m)
+       # print(sum/len(values))
+        return sum/len(values)
     
     def setDoStream(self, _boolean):
         self.doloop=_boolean
